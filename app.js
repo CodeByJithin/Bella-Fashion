@@ -53,6 +53,7 @@ async function loadProducts() {
       .from('products')
       .select('*')
       .eq("user_id", USER_ID)
+      .eq("active", "yes")
       .order('id', { ascending: true });
 
     if (error) {
@@ -190,21 +191,39 @@ function render() {
     none.style.display = 'none';
   }
 
-  grid.innerHTML = products.map(p => {
+    grid.innerHTML = products.map(p => {
     const inCart = cart[p.id] > 0;
+    const isStockOut = p.stockout === 'yes';
+
+    // Override superbadge when out of stock
+    const superbadge = isStockOut ? 'Currently Out of Stock' : p.superbadge;
+
     return `
     <div class="card">
       <img class="card-img" src="${p.image}" alt="${p.name}" loading="lazy" />
+      
       ${p.badge ? `<div class="badge">${p.badge}</div>` : ''}
-      <button class="add-btn ${inCart ? 'added' : ''}" id="add-${p.id}" onclick="addToCart(${p.id})">${inCart ? '✓' : '+'}</button>
+
+      ${!isStockOut ? `
+        <button 
+          class="add-btn ${inCart ? 'added' : ''}" 
+          id="add-${p.id}" 
+          onclick="addToCart(${p.id})"
+        >
+          ${inCart ? '✓' : '+'}
+        </button>
+      ` : ''}
+
       <div class="card-body">
         <div class="card-name">${p.name}</div>
+
         <div class="price-row">
           <span class="discount-tag">-${p.discount}%</span>
           <span class="price"><sup>₹</sup>${p.price.toLocaleString('en-IN')}</span>
           <span class="original">₹${p.originalPrice.toLocaleString('en-IN')}</span>
         </div>
-        ${p.superbadge != null ? `<div class="deal-label">${p.superbadge}</div>` : ''}
+
+        ${superbadge != null ? `<div class="deal-label">${superbadge}</div>` : ''}
         ${p.sold ? `<div class="sold-info">${p.sold}</div>` : ''}
       </div>
     </div>`;
