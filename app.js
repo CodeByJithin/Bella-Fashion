@@ -63,6 +63,21 @@ async function loadProducts() {
     PRODUCTS = data || [];
 
     console.log('Products:', PRODUCTS);
+    const uniqueCategories = [...new Set(
+      PRODUCTS
+        .map(p => p.category)
+        .filter(cat => cat && cat.trim() !== '')
+    )];
+    
+    const catSelect = document.getElementById('catSelect');
+    
+    // Generate options dynamically
+    catSelect.innerHTML = `
+      <option value="all">All Categories</option>
+      ${uniqueCategories.map(cat => `
+        <option value="${cat}">${cat}</option>
+      `).join('')}
+    `;
 
     render();
     updateCartUI();
