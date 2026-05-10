@@ -1,6 +1,6 @@
 {
   "name": "Bella Fashions",
-  "short_name": "Store",
+  "short_name": "Bella Fashions",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
